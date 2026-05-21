@@ -62,8 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Insert data
             $insert = mysqli_query(
                 $conn,
-                "INSERT INTO admins(username, email, password)
-                 VALUES('$nama', '$email', '$hashPassword')"
+                "INSERT INTO admins(username, email, password) VALUES('$nama', '$email', '$hashPassword')"
             );
 
             if ($insert) {

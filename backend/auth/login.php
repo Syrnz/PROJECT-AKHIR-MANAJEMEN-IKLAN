@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../../database/koneksi_db.php';
+include_once '../../database/koneksi_db.php';
 $error = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email    = trim($_POST['email']);
@@ -33,9 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['nama']  = $admin['nama'];
                 $_SESSION['email'] = $admin['email'];
 
-               
-
-                header("Location: ../dashboard/dashboard.php");
+                header("Location: ../dashboard/main/index.php");
                 exit;
             } else {
 
