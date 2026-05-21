@@ -1,72 +1,49 @@
 <?php
 session_start();
-require_once '../../database/koneksi_db.php';
+require '../../database/koneksi_db.php';
 $error = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email    = trim($_POST['email']);
     $password = trim($_POST['password']);
     if (empty($email) || empty($password)) {
-
         $error = "Email dan Password wajib diisi!";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-
         $error = "Format email tidak valid!";
     } else {
-
-
-
         $query = mysqli_query($conn,"SELECT * FROM admins WHERE email = '$email'"
         );
-
-
         if (mysqli_num_rows($query) > 0) {
-
             $admin = mysqli_fetch_assoc($query);
-
-            
             if (password_verify($password, $admin['password'])) {
-
-                
-
                 $_SESSION['login'] = true;
                 $_SESSION['id']    = $admin['id'];
                 $_SESSION['nama']  = $admin['nama'];
                 $_SESSION['email'] = $admin['email'];
-
-               
-
                 header("Location: ../dashboard/dashboard.php");
                 exit;
             } else {
-
                 $error = "Password salah!";
             }
         } else {
-
             $error = "Email tidak ditemukan!";
         }
     }
 }
 ?>
-?>
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Login Page</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
     <div class="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-2">
         <div class="hidden md:flex bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-12 flex-col justify-center">
             <h1 class="text-5xl font-bold mb-6">
                 Welcome Back
             </h1>
-
             <p class="text-lg text-blue-100 leading-relaxed">
                 Masuk ke dashboard admin untuk mengelola data,
                 pengguna, dan seluruh aktivitas sistem dengan mudah.
@@ -97,7 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label class="block mb-2 text-sm font-semibold text-gray-700">
                         Email
                     </label>
-
                     <input
                         type="email"
                         name="email"
@@ -105,13 +81,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         value="<?= isset($email) ? htmlspecialchars($email) : '' ?>"
                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 outline-none transition">
                 </div>
-
-                <!-- Password -->
                 <div>
                     <label class="block mb-2 text-sm font-semibold text-gray-700">
                         Password
                     </label>
-
                     <input
                         type="password"
                         name="password"
@@ -133,5 +106,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 </body>
-
 </html>
