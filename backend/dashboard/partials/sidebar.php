@@ -60,7 +60,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <!-- Menu Item Dashboard -->
                     <li>
                         <a
-                            href="../main/index.php"
+                            href="../main/dashboard.php"
                             @click="selected = (selected === 'Dashboard' ? '':'Dashboard')"
                             class="menu-item group  <?= ($current_page == 'index.php') ? 'menu-item-active' : 'menu-item-inactive'; ?>"
                             :class=" (selected === 'Dashboard') ? 'menu-item-active' : 'menu-item-inactive'">
