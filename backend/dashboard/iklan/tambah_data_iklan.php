@@ -1,5 +1,5 @@
     <?php
-
+    include('../../middleware/check_login.php');
     ?>
 
     <!doctype html>

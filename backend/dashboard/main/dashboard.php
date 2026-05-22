@@ -1,9 +1,5 @@
     <?php
-    session_start();
-    if (is_null($_SESSION["login"])) {
-        header("Location: ../auth/login.php");
-        exit;
-    }
+    include('../../middleware/check_login.php');
     include_once("../../../database/koneksi_db.php");
     ?>
 

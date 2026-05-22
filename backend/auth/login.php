@@ -2,51 +2,51 @@
 session_start();
 include_once '../../database/koneksi_db.php';
 $error = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
     $email    = trim($_POST['email']);
     $password = trim($_POST['password']);
+
     if (empty($email) || empty($password)) {
 
         $error = "Email dan Password wajib diisi!";
+
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
         $error = "Format email tidak valid!";
+
     } else {
 
+        try {
+            $query = "SELECT * FROM admins WHERE email = :email";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
+            if ($admin) {
+                if (password_verify($password, $admin['password'])) {
+                    $_SESSION['login']   = true;
+                    $_SESSION['id']      = $admin['id'];
+                    $_SESSION['username'] = $admin['username'];
+                    $_SESSION['email']   = $admin['email'];
 
-        $query = mysqli_query($conn,"SELECT * FROM admins WHERE email = '$email'"
-        );
-
-
-        if (mysqli_num_rows($query) > 0) {
-
-            $admin = mysqli_fetch_assoc($query);
-
-            
-            if (password_verify($password, $admin['password'])) {
-
-                
-
-                $_SESSION['login'] = true;
-                $_SESSION['id']    = $admin['id'];
-                $_SESSION['nama']  = $admin['nama'];
-                $_SESSION['email'] = $admin['email'];
-
-                header("Location: ../dashboard/main/index.php");
-                exit;
+                    header("Location: ../dashboard/main/dashboard.php");
+                    exit;
+                } else {
+                    $error = "Password salah!";
+                }
             } else {
-
-                $error = "Password salah!";
+                $error = "Email tidak ditemukan!";
             }
-        } else {
-
-            $error = "Email tidak ditemukan!";
+        } catch (PDOException $e) {
+            $error = "Terjadi kesalahan sistem: " . $e->getMessage();
         }
     }
 }
 ?>
-?>
+
 <!DOCTYPE html>
 <html lang="id">
 
