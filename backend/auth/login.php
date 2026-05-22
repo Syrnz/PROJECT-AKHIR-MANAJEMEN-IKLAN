@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
     <div class="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-2">
-        <div class="hidden md:flex bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-12 flex-col justify-center">
+        <div class="hidden md:flex bg-linear-to-br from-blue-600 to-indigo-700 text-white p-12 flex-col justify-center">
             <h1 class="text-5xl font-bold mb-6">
                 Welcome Back
             </h1>
