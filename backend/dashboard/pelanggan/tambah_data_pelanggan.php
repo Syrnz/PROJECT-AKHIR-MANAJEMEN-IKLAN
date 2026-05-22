@@ -14,7 +14,7 @@
             content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>
-            Dashboard
+            TAMBAH DATA PELANGGAN
         </title>
         <link rel="icon" href="../favicon.ico">
         <link href="../src/css/style.css" rel="stylesheet">
@@ -68,6 +68,95 @@
                                         </h3>
                                     </div>
                                     <!-- form -->
+                                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                    <?php
+                                    $error = "";
+                                    if (isset($_POST['tambahData'])) {
+                                        $kode_pelanggan = htmlspecialchars($_POST['kode_pelanggan']);
+                                        $nama_pelanggan = htmlspecialchars($_POST['nama_pelanggan']);
+                                        $email = htmlspecialchars($_POST['email']);
+                                        $no_hp = htmlspecialchars($_POST['no_hp']);
+                                        $alamat = htmlspecialchars($_POST['alamat']);
+
+                                        if (
+                                            empty($kode_pelanggan) || empty($nama_pelanggan) || empty($email) || empty($no_hp) || empty($alamat)
+                                        ) {
+                                            $error = "Semua field wajib diisi!";
+                                        } elseif (strlen($kode_pelanggan) > 16) {
+                                            $error = "NIK tidak boleh melebihi 16 karakter";
+                                        } elseif (strlen($no_hp) <= 12) {
+                                            $error = "Nomor Telepon minimal 12 digit";
+                                        } elseif (strlen($no_hp) > 13) {
+                                            $error = "Nomor Telepon tidak boleh melebihi 13 digit";
+                                        } else {
+
+                                            $sql = "INSERT INTO pelanggan (id_pelanggan, kode_pelanggan, nama_pelanggan, email, no_hp, alamat, created_at)
+                                                    VALUES (NULL, :kode_pelanggan, :nama_pelanggan, :email, :no_hp, :alamat, CURRENT_TIMESTAMP)";
+                                            $stmt = $conn->prepare($sql);
+                                            $stmt->bindParam(':kode_pelanggan', $kode_pelanggan);
+                                            $stmt->bindParam(':nama_pelanggan', $nama_pelanggan);
+                                            $stmt->bindParam(':email', $email);
+                                            $stmt->bindParam(':no_hp', $no_hp);
+                                            $stmt->bindParam(':alamat', $alamat);
+
+                                            // $stmt->execute([$kode_pelanggan, $nama_pelanggan, $email, $no_hp, $alamat]);
+
+                                            if ($stmt->execute()) {
+                                                echo "<script>
+                                                        Swal.fire({
+                                                            icon: 'success',
+                                                            title: 'Data berhasil ditambahkan!',
+                                                            showConfirmButton: false,
+                                                            timer: 1500
+                                                        }).then(() => {
+                                                            window.location.href = 'data_pelanggan.php';
+                                                        });
+                                                    </script>";
+                                            } else {
+                                                echo "<script>
+                                            Swal.fire({
+                                                icon: 'error',
+                                                            title: 'Data gagal ditambahkan!',
+                                                            showConfirmButton: false,
+                                                            timer: 1500
+                                                        });
+                                                    </script>";
+                                            }
+                                        }
+                                    }
+                                    ?>
+                                    <?php if ($error != "") : ?>
+                                        <div
+                                            class="rounded-xl border border-error-500 bg-error-50 p-4 dark:border-error-500/30 dark:bg-error-500/15">
+                                            <div class="flex items-start gap-3">
+                                                <div class="-mt-0.5 text-error-500">
+                                                    <svg
+                                                        class="fill-current"
+                                                        width="24"
+                                                        height="24"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            fill-rule="evenodd"
+                                                            clip-rule="evenodd"
+                                                            d="M20.3499 12.0004C20.3499 16.612 16.6115 20.3504 11.9999 20.3504C7.38832 20.3504 3.6499 16.612 3.6499 12.0004C3.6499 7.38881 7.38833 3.65039 11.9999 3.65039C16.6115 3.65039 20.3499 7.38881 20.3499 12.0004ZM11.9999 22.1504C17.6056 22.1504 22.1499 17.6061 22.1499 12.0004C22.1499 6.3947 17.6056 1.85039 11.9999 1.85039C6.39421 1.85039 1.8499 6.3947 1.8499 12.0004C1.8499 17.6061 6.39421 22.1504 11.9999 22.1504ZM13.0008 16.4753C13.0008 15.923 12.5531 15.4753 12.0008 15.4753L11.9998 15.4753C11.4475 15.4753 10.9998 15.923 10.9998 16.4753C10.9998 17.0276 11.4475 17.4753 11.9998 17.4753L12.0008 17.4753C12.5531 17.4753 13.0008 17.0276 13.0008 16.4753ZM11.9998 6.62898C12.414 6.62898 12.7498 6.96476 12.7498 7.37898L12.7498 13.0555C12.7498 13.4697 12.414 13.8055 11.9998 13.8055C11.5856 13.8055 11.2498 13.4697 11.2498 13.0555L11.2498 7.37898C11.2498 6.96476 11.5856 6.62898 11.9998 6.62898Z"
+                                                            fill="#F04438" />
+                                                    </svg>
+                                                </div>
+
+                                                <div>
+                                                    <h4 class="mb-1 text-sm font-semibold text-gray-800 dark:text-white/90">
+                                                        Error Message
+                                                    </h4>
+
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                                        <?= $error ?>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
                                     <form action="tambah_data_pelanggan.php" name="tambahData" id="submit" method="POST">
                                         <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
                                             <div>
@@ -77,7 +166,7 @@
                                                 </label>
                                                 <input
                                                     type="number" name="kode_pelanggan" id="kode_pelanggan"
-                                                    class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" placeholder="NIK" />
+                                                    class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" placeholder="NIK | maksimal 16 karakter" />
                                             </div>
                                             <div>
                                                 <label for="nama_pelanggan"
@@ -104,7 +193,7 @@
                                                 </label>
                                                 <input
                                                     type="text" name="no_hp" id="no_hp"
-                                                    class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" placeholder="No HP" />
+                                                    class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" placeholder="No HP | max 13 Digit" />
                                             </div>
                                             <div>
                                                 <label for="alamat"
@@ -120,68 +209,15 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <?php
-                                    if (isset($_POST['tambahData'])) {
-                                        $kode_pelanggan = htmlspecialchars($_POST['kode_pelanggan']);
-                                        $nama_pelanggan = htmlspecialchars($_POST['nama_pelanggan']);
-                                        $email = htmlspecialchars($_POST['email']);
-                                        $no_hp = htmlspecialchars($_POST['no_hp']);
-                                        $alamat = htmlspecialchars($_POST['alamat']);
 
-                                        $sql = "INSERT INTO pelanggan (id_pelanggan, kode_pelanggan, nama_pelanggan, email, no_hp, alamat, created_at)
-                                                    VALUES (NULL, :kode_pelanggan, :nama_pelanggan, :email, :no_hp, :alamat, CURRENT_TIMESTAMP)";
-                                        $stmt = $conn->prepare($sql);
-                                        $stmt->bindParam(':kode_pelanggan', $kode_pelanggan);
-                                        $stmt->bindParam(':nama_pelanggan', $nama_pelanggan);
-                                        $stmt->bindParam(':email', $email);
-                                        $stmt->bindParam(':no_hp', $no_hp);
-                                        $stmt->bindParam(':alamat', $alamat);
-
-                                        // $stmt->execute([$kode_pelanggan, $nama_pelanggan, $email, $no_hp, $alamat]);
-
-                                        if ($stmt->execute()) {
-                                            echo "<script> Swal.fire({
-                                                    position: 'top-end',
-                                                    icon: 'success',
-                                                    title: 'Your work has been saved',
-                                                    showConfirmButton: false,
-                                                    timer: 1500
-                                                });</script>";
-                                        } else {
-                                            echo "<script>alert('Data gagal ditambahkan!');</script>";
-                                        }
-                                    }
-                                    ?>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </main>
             </div>
         </div>
-        <script>
-            document.getElementById('submit').addEventListener('submit', function(e) {
-                var form = this;
-                e.preventDefault(); // Stop the form from submitting immediately
 
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, submit it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit(); // Manually submit the form if confirmed
-                    }
-                });
-            });
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script defer src="../src/js/bundle.js"></script>
     </body>
 
