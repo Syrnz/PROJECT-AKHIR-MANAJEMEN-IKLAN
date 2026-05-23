@@ -9,7 +9,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <div
         :class="sidebarToggle ? 'justify-center' : 'justify-between'"
         class="flex items-center gap-2 pt-8 sidebar-header pb-7">
-        <a href="../main/index.php">
+        <a href="../main/dashboard.php">
             <span class="logo" :class="sidebarToggle ? 'hidden' : ''">
                 <img class="dark:hidden w-40" src="../../../assets/logo-iklankan-new.png" alt="Logo" />
                 <img

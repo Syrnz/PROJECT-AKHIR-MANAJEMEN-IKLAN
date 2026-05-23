@@ -1570,6 +1570,9 @@ svg{-ms-touch-action:none;touch-action:none}image,text,.jvm-zoomin,.jvm-zoomout{
   .fill-current {
     fill: currentColor;
   }
+  .fill-error-500 {
+    fill: var(--color-blue-500);
+  }
   .fill-gray-500 {
     fill: var(--color-gray-500);
   }
@@ -2277,6 +2280,13 @@ svg{-ms-touch-action:none;touch-action:none}image,text,.jvm-zoomin,.jvm-zoomout{
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-brand-600);
+      }
+    }
+  }
+  .hover\:bg-error-600 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-error-600);
       }
     }
   }
