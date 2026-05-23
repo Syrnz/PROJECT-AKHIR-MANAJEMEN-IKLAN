@@ -1,5 +1,8 @@
     <?php
     include('../../middleware/check_login.php');
+
+    include_once('../../../database/koneksi_db.php');
+
     ?>
 
     <!doctype html>
@@ -16,6 +19,7 @@
         </title>
         <link rel="icon" href="../favicon.ico">
         <link href="../src/css/style.css" rel="stylesheet">
+
     </head>
 
     <body
@@ -61,23 +65,218 @@
                 <main>
                     <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
                         <div class="grid grid-cols-12 gap-4 md:gap-6">
-                            <div class="col-span-12 space-y-6 xl:col-span-7">
+                            <div class="col-span-12 space-y-6">
+                                <div class="space-y-5 sm:space-y-6">
+                                    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+                                        <div class="px-5 py-4 sm:px-6 sm:py-5">
+                                            <h3
+                                                class="text-base font-medium text-gray-800 dark:text-white/90">
+                                                Basic Table 1
+                                            </h3>
+                                        </div>
+                                        <div
+                                            class="p-5 border-t border-gray-100 dark:border-gray-800 sm:p-6">
+                                            <!-- ====== Table -->
+                                            <div
+                                                class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+                                                <div class="max-w-full overflow-x-auto">
+                                                    <?php
+                                                    $sql = "SELECT * FROM pelanggan";
+                                                    $stmt = $conn->query($sql);
 
-                                <!-- Metric Group One -->
+                                                    $stmt->execute();
+                                                    $pelanggan = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                    ?>
+                                                    <table class="min-w-full">
+                                                        <thead>
+                                                            <tr class="border-b border-gray-100 dark:border-gray-800">
+                                                                <th class="px-5 py-3 sm:px-6">
+                                                                    <div class="flex items-center">
+                                                                        <p
+                                                                            class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
+                                                                            No
+                                                                        </p>
+                                                                    </div>
+                                                                </th>
+                                                                <th class="px-5 py-3 sm:px-6">
+                                                                    <div class="flex items-center">
+                                                                        <p
+                                                                            class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
+                                                                            Kode Pelanggan
+                                                                        </p>
+                                                                    </div>
+                                                                </th>
+                                                                <th class="px-5 py-3 sm:px-6">
+                                                                    <div class="flex items-center">
+                                                                        <p
+                                                                            class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
+                                                                            Nama Pelanggan
+                                                                        </p>
+                                                                    </div>
+                                                                </th>
+                                                                <th class="px-5 py-3 sm:px-6">
+                                                                    <div class="flex items-center">
+                                                                        <p
+                                                                            class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
+                                                                            Email
+                                                                        </p>
+                                                                    </div>
+                                                                </th>
+                                                                <th class="px-5 py-3 sm:px-6">
+                                                                    <div class="flex items-center">
+                                                                        <p
+                                                                            class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
+                                                                            No HP
+                                                                        </p>
+                                                                    </div>
+                                                                </th>
+                                                                <th class="px-5 py-3 sm:px-6">
+                                                                    <div class="flex items-center">
+                                                                        <p
+                                                                            class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
+                                                                            Alamat
+                                                                        </p>
+                                                                    </div>
+                                                                </th>
+                                                                <th class="px-5 py-3 sm:px-6">
+                                                                    <div class="flex items-center">
+                                                                        <p
+                                                                            class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
+                                                                            Action
+                                                                        </p>
+                                                                    </div>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                                                            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                                            <?php foreach ($pelanggan as $index => $pel): ?>
+                                                                <tr>
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <div class="flex items-center">
+                                                                            <p class="text-gray-500 text-theme-sm dark:text-gray-400">
+                                                                                <!-- make this no++ -->
+                                                                                <?php echo $index + 1; ?>
+                                                                            </p>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <div class="flex items-center">
+                                                                            <p class="text-gray-500 text-theme-sm dark:text-gray-400">
+                                                                                <?php echo htmlspecialchars($pel['kode_pelanggan']); ?>
+                                                                            </p>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <div class="flex items-center">
+                                                                            <p class="text-gray-500 text-theme-sm dark:text-gray-400">
+                                                                                <?php echo htmlspecialchars($pel['nama_pelanggan']); ?>
+                                                                            </p>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <div class="flex items-center">
+                                                                            <p class="text-gray-500 text-theme-sm dark:text-gray-400">
+                                                                                <?php echo htmlspecialchars($pel['email']); ?>
+                                                                            </p>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <div class="flex items-center">
+                                                                            <p class="text-gray-500 text-theme-sm dark:text-gray-400">
+                                                                                <?php echo htmlspecialchars($pel['no_hp']); ?>
+                                                                            </p>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <div class="flex items-center">
+                                                                            <p class="text-gray-500 text-theme-sm dark:text-gray-400">
+                                                                                <?php echo htmlspecialchars($pel['alamat']); ?>
+                                                                            </p>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <div class="flex items-center">
+                                                                            <a href="edit_data_pelanggan.php?id=<?php echo $pel['id_pelanggan']; ?>" class="text-brand-500 hover:text-brand-600 text-theme-sm dark:text-brand-400 dark:hover:text-brand-300">
+                                                                                Edit
+                                                                            </a>
+                                                                            <span class="mx-2 dark:text-gray-400">|</span>
 
-                                <!-- Metric Group One -->
-
-                                <!-- ====== Chart One Start -->
-
-                                <!-- ====== Chart One End -->
+                                                                            <a href="?hapus=<?= $pel['id_pelanggan']; ?>" class="text-error-500 hover:text-error-600 text-theme-sm dark:text-error-400 dark:hover:text-error-300">
+                                                                                Delete
+                                                                            </a>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php endforeach; ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </main>
-                <!-- ===== Main Content End ===== -->
             </div>
-            <!-- ===== Content Area End ===== -->
         </div>
+        <?php
+        if (isset($_GET["hapus"])) {
+
+            $id = $_GET["hapus"];
+            echo " <script>
+                Swal.fire({
+                    title: 'Apakah kamu yakin hapus data ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Hapus',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6b7280'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'data_pelanggan.php?hapus_confirmed=$id';
+                    }
+                });
+                </script>
+                ";
+        }
+
+        if (isset($_GET["hapus_confirmed"])) {
+            $id = $_GET["hapus_confirmed"];
+            $sql = "DELETE FROM pelanggan WHERE id_pelanggan = :id_pelanggan";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id_pelanggan', $id);
+
+            if ($stmt->execute()) {
+                echo "<script>
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: 'Data berhasil dihapus',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = 'data_pelanggan.php';
+                    });
+                    </script>
+                    ";
+            } else {
+                echo "<script>
+                    Swal.fire({
+                        title: 'Gagal!',
+                        text: 'Data gagal dihapus',
+                        icon: 'error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    </script>
+                    ";
+            }
+        }
+        ?>
         <!-- ===== Page Wrapper End ===== -->
         <script defer src="../src/js/bundle.js"></script>
     </body>
