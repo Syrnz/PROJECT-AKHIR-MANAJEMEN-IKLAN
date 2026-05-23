@@ -14,7 +14,7 @@
             content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>
-            TAMBAH DATA PELANGGAN
+            EDIT DATA PELANGGAN
         </title>
         <link rel="icon" href="../favicon.ico">
         <link href="../src/css/style.css" rel="stylesheet">
@@ -64,15 +64,25 @@
                                     <div class="px-5 py-4 sm:px-6 sm:py-5">
                                         <h3
                                             class="text-base font-medium text-gray-800 dark:text-white/90">
-                                            Tambah Data Pelanggan
+                                            Edit Data Pelanggan
                                         </h3>
                                     </div>
 
                                     <!-- form -->
                                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                     <?php
+                                    if (!isset($_GET['id'])) {
+                                        die("ID tidak ditemukan!");
+                                    }
+                                    $sql = "SELECT * FROM pelanggan WHERE id_pelanggan = :id_pelanggan";
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->bindParam(':id_pelanggan', $_GET['id']);
+                                    $stmt->execute();
+                                    $pelanggan = $stmt->fetch(PDO::FETCH_ASSOC);
+
                                     $error = "";
-                                    if (isset($_POST['tambahData'])) {
+                                    if (isset($_POST['ubahData'])) {
+                                        $id_pelanggan = htmlspecialchars($_POST['id_pelanggan']);
                                         $kode_pelanggan = htmlspecialchars($_POST['kode_pelanggan']);
                                         $nama_pelanggan = htmlspecialchars($_POST['nama_pelanggan']);
                                         $email = htmlspecialchars($_POST['email']);
@@ -97,14 +107,14 @@
                                             $error = "Nomor Telepon tidak boleh melebihi 13 digit";
                                         } else {
 
-                                            $sql = "INSERT INTO pelanggan (id_pelanggan, kode_pelanggan, nama_pelanggan, email, no_hp, alamat, created_at)
-                                                    VALUES (NULL, :kode_pelanggan, :nama_pelanggan, :email, :no_hp, :alamat, CURRENT_TIMESTAMP)";
+                                            $sql = "UPDATE pelanggan SET kode_pelanggan = :kode_pelanggan, nama_pelanggan = :nama_pelanggan, email = :email, no_hp = :no_hp, alamat = :alamat WHERE id_pelanggan = :id_pelanggan";
                                             $stmt = $conn->prepare($sql);
                                             $stmt->bindParam(':kode_pelanggan', $kode_pelanggan);
                                             $stmt->bindParam(':nama_pelanggan', $nama_pelanggan);
                                             $stmt->bindParam(':email', $email);
                                             $stmt->bindParam(':no_hp', $no_hp);
                                             $stmt->bindParam(':alamat', $alamat);
+                                            $stmt->bindParam(':id_pelanggan', $_GET['id']);
 
                                             // $stmt->execute([$kode_pelanggan, $nama_pelanggan, $email, $no_hp, $alamat]);
 
@@ -112,7 +122,7 @@
                                                 echo "<script>
                                                         Swal.fire({
                                                             icon: 'success',
-                                                            title: 'Data berhasil ditambahkan!',
+                                                            title: 'Data berhasil diubah!',
                                                             showConfirmButton: false,
                                                             timer: 1500
                                                         }).then(() => {
@@ -123,7 +133,7 @@
                                                 echo "<script>
                                                         Swal.fire({
                                                             icon: 'error',
-                                                            title: 'Data gagal ditambahkan!',
+                                                            title: 'Data gagal diubah!',
                                                             showConfirmButton: false,
                                                             timer: 1500
                                                         });
@@ -164,15 +174,16 @@
                                             </div>
                                         </div>
                                     <?php endif; ?>
-                                    <form action="tambah_data_pelanggan.php" name="tambahData" id="submit" method="POST">
+                                    <form action="edit_data_pelanggan.php?id=<?php echo $pelanggan['id_pelanggan'] ?>" name="ubahData" id="submit" method="POST">
                                         <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
                                             <div>
                                                 <label for="kode_pelanggan"
                                                     class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                                                     Kode Pelanggan
                                                 </label>
+                                                <input type="text" name="id_pelanggan" id="id_pelanggan" value="<?php echo $pelanggan['id_pelanggan']; ?>" hidden>
                                                 <input
-                                                    type="number" name="kode_pelanggan" id="kode_pelanggan"
+                                                    type="number" name="kode_pelanggan" id="kode_pelanggan" value="<?php echo $pelanggan['kode_pelanggan']; ?>"
                                                     class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" placeholder="NIK | maksimal 16 karakter" />
                                             </div>
                                             <div>
@@ -181,7 +192,7 @@
                                                     Nama Pelanggan
                                                 </label>
                                                 <input
-                                                    type="text" name="nama_pelanggan" id="nama_pelanggan"
+                                                    type="text" name="nama_pelanggan" id="nama_pelanggan" value="<?php echo $pelanggan['nama_pelanggan']; ?>"
                                                     class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" placeholder="Nama Pelanggan" />
                                             </div>
                                             <div>
@@ -190,7 +201,7 @@
                                                     Email Pelanggan
                                                 </label>
                                                 <input
-                                                    type="email" name="email" id="email"
+                                                    type="email" name="email" id="email" value="<?php echo $pelanggan['email']; ?>"
                                                     class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" placeholder="Email" />
                                             </div>
                                             <div>
@@ -199,7 +210,7 @@
                                                     Nomor Handphone
                                                 </label>
                                                 <input
-                                                    type="text" name="no_hp" id="no_hp"
+                                                    type="text" name="no_hp" id="no_hp" value="<?php echo $pelanggan['no_hp']; ?>"
                                                     class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" placeholder="No HP | max 13 Digit" />
                                             </div>
                                             <div>
@@ -208,11 +219,12 @@
                                                     Alamat
                                                 </label>
                                                 <input
-                                                    type="text" name="alamat" id="alamat"
+                                                    type="text" name="alamat" id="alamat" value="<?php echo $pelanggan['alamat']; ?>"
                                                     class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" placeholder="Alamat" />
                                             </div>
-                                            <div>
-                                                <button type="submit" name="tambahData" id="btnTambah" class="bg-brand-500 hover:bg-brand-600 rounded-lg p-3 text-sm font-medium text-white transition-colors"> Submit </button>
+                                            <div class="flex gap-x-6">
+                                                <button type="submit" name="ubahData" id="btnEdit" class="bg-brand-500 hover:bg-brand-600 rounded-lg p-3 text-sm font-medium text-white transition-colors"> Ubah </button>
+                                                <a href="data_pelanggan.php" class="bg-gray-500 hover:bg-gray-600 rounded-lg p-3 text-sm font-medium text-white transition-colors"> Batal </a>
                                             </div>
                                         </div>
                                     </form>
