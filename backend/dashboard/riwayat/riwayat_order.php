@@ -69,39 +69,6 @@ include_once('../../../database/koneksi_db.php');
                         $stmt->execute();
                         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                        $insertRiwayat = $conn->prepare("INSERT INTO riwayat_order (id_iklan_lama, id_pelanggan, id_lokasi, nama_pelanggan, nama_lokasi, judul_iklan, file_iklan, tanggal_mulai, tanggal_selesai,
-                                                            durasi_hari, total_harga, status_iklan, alasan
-                                                        ) VALUES (
-                                                            :id_iklan_lama,
-                                                            :id_pelanggan,
-                                                            :id_lokasi,
-                                                            :nama_pelanggan,
-                                                            :nama_lokasi,
-                                                            :judul_iklan,
-                                                            :file_iklan,
-                                                            :tanggal_mulai,
-                                                            :tanggal_selesai,
-                                                            :durasi_hari,
-                                                            :total_harga,
-                                                            'dihapus',
-                                                            'Dihapus oleh admin, kesalahan data/atau pembatalan iklan'
-                                                        )
-                                                    ");
-
-                        $insertRiwayat->execute([
-                            ':id_iklan_lama' => $data['id_iklan'],
-                            ':id_pelanggan' => $data['id_pelanggan'],
-                            ':id_lokasi' => $data['id_lokasi'],
-                            ':nama_pelanggan' => $data['nama_pelanggan'],
-                            ':nama_lokasi' => $data['nama_lokasi'],
-                            ':judul_iklan' => $data['judul_iklan'],
-                            ':file_iklan' => $data['file_iklan'],
-                            ':tanggal_mulai' => $data['tanggal_mulai'],
-                            ':tanggal_selesai' => $data['tanggal_selesai'],
-                            ':durasi_hari' => $data['durasi_hari'],
-                            ':total_harga' => $data['total_harga']
-                        ]);
-
                         $updateLokasi = $conn->prepare("UPDATE lokasi_iklan 
                                                         SET status = 'tersedia'
                                                         WHERE id_lokasi = :id_lokasi
@@ -158,39 +125,6 @@ include_once('../../../database/koneksi_db.php');
                         $stmt->bindParam(':id', $id);
                         $stmt->execute();
                         $data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                        $insertRiwayat = $conn->prepare("INSERT INTO riwayat_order (id_iklan_lama, id_pelanggan, id_lokasi, nama_pelanggan, nama_lokasi, judul_iklan, file_iklan, tanggal_mulai, tanggal_selesai,
-                                                            durasi_hari, total_harga, status_iklan, alasan
-                                                        ) VALUES (
-                                                            :id_iklan_lama,
-                                                            :id_pelanggan,
-                                                            :id_lokasi,
-                                                            :nama_pelanggan,
-                                                            :nama_lokasi,
-                                                            :judul_iklan,
-                                                            :file_iklan,
-                                                            :tanggal_mulai,
-                                                            :tanggal_selesai,
-                                                            :durasi_hari,
-                                                            :total_harga,
-                                                            'selesai',
-                                                            'Pembayaran lunas, iklan dipindahkan ke arsip'
-                                                        )
-                                                    ");
-
-                        $insertRiwayat->execute([
-                            ':id_iklan_lama' => $data['id_iklan'],
-                            ':id_pelanggan' => $data['id_pelanggan'],
-                            ':id_lokasi' => $data['id_lokasi'],
-                            ':nama_pelanggan' => $data['nama_pelanggan'],
-                            ':nama_lokasi' => $data['nama_lokasi'],
-                            ':judul_iklan' => $data['judul_iklan'],
-                            ':file_iklan' => $data['file_iklan'],
-                            ':tanggal_mulai' => $data['tanggal_mulai'],
-                            ':tanggal_selesai' => $data['tanggal_selesai'],
-                            ':durasi_hari' => $data['durasi_hari'],
-                            ':total_harga' => $data['total_harga']
-                        ]);
 
                         $updateLokasi = $conn->prepare("UPDATE lokasi_iklan 
                                                         SET status = 'tersedia'
@@ -275,11 +209,6 @@ include_once('../../../database/koneksi_db.php');
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Jenis Periklanan</p>
-                                                            </th>
-                                                            <th class="px-5 py-3 sm:px-6 text-left">
-                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Lokasi Pengiklanan</p>
-                                                            </th>
-                                                            <th class="px-5 py-3 sm:px-6 text-left">
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Lokasi Pengiklanan</p>
@@ -466,16 +395,6 @@ include_once('../../../database/koneksi_db.php');
                                                                                 class="text-warning-500 hover:text-warning-600 text-theme-sm dark:text-warning-400 dark:hover:text-warning-300 bg-transparent border-none cursor-pointer p-0">
                                                                                 Pindahkan Arsip
                                                                             </button>
-                                                                        </div>
-                                                                    </td>
-                                                                    <!-- Cetak Invoice -->
-                                                                    <td class="px-5 py-4 sm:px-6">
-                                                                        <div class="flex items-center gap-2">
-                                                                            <a href="../pembayaran/cetak_invoice.php?id=<?= $iklan['id_iklan'] ?>"
-                                                                                target="_blank"
-                                                                                class="text-brand-500 hover:text-brand-600 text-theme-sm dark:text-brand-400 dark:hover:text-brand-300">
-                                                                                Cetak Invoice
-                                                                            </a>
                                                                         </div>
                                                                     </td>
                                                                     <!-- Cetak Invoice -->
