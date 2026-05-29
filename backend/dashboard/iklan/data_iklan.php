@@ -96,10 +96,11 @@ include_once('../../../database/koneksi_db.php');
                     // ==============================
                     // AMBIL DATA IKLAN + NAMA PELANGGAN
                     // ==============================
-                    $sql  = "SELECT i.*, p.nama_pelanggan
-                             FROM iklan i
-                             LEFT JOIN pelanggan p ON i.id_pelanggan = p.id_pelanggan
-                             ORDER BY i.created_at DESC";
+                    $sql  = "SELECT i.*, p.nama_pelanggan, p.kode_pelanggan, l.nama_lokasi, l.alamat
+                                FROM iklan AS i
+                                JOIN pelanggan AS p ON i.id_pelanggan = p.id_pelanggan
+                                JOIN lokasi_iklan AS l ON i.id_lokasi = l.id_lokasi
+                                ORDER BY i.created_at DESC";
                     $stmt = $conn->query($sql);
                     $iklanList = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     ?>
@@ -114,7 +115,7 @@ include_once('../../../database/koneksi_db.php');
                                         <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
                                             Data Iklan
                                         </h3>
-                                        
+
                                     </div>
 
                                     <!-- Table -->
@@ -128,13 +129,16 @@ include_once('../../../database/koneksi_db.php');
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">No</p>
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
-                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Pelanggan</p>
+                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Pelanggan | Kode</p>
+                                                            </th>
+                                                            <th class="px-5 py-3 sm:px-6 text-left">
+                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Jenis Periklanan</p>
+                                                            </th>
+                                                            <th class="px-5 py-3 sm:px-6 text-left">
+                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Lokasi Pengiklanan</p>
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Judul Iklan</p>
-                                                            </th>
-                                                            <th class="px-5 py-3 sm:px-6 text-left">
-                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Jenis</p>
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Tanggal Mulai</p>
@@ -149,13 +153,19 @@ include_once('../../../database/koneksi_db.php');
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Harga</p>
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
-                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Status</p>
-                                                            </th>
-                                                            <th class="px-5 py-3 sm:px-6 text-left">
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">File</p>
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
+                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Status Iklan</p>
+                                                            </th>
+                                                            <th class="px-5 py-3 sm:px-6 text-left">
+                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Status Pembayaran</p>
+                                                            </th>
+                                                            <th class="px-5 py-3 sm:px-6 text-left">
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Action</p>
+                                                            </th>
+                                                            <th class="px-5 py-3 sm:px-6 text-left">
+                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Cetak Invoice</p>
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -168,7 +178,7 @@ include_once('../../../database/koneksi_db.php');
                                                             </tr>
                                                         <?php else : ?>
                                                             <?php foreach ($iklanList as $index => $iklan) : ?>
-                                                                <tr >
+                                                                <tr>
 
                                                                     <!-- No -->
                                                                     <td class="px-5 py-4 sm:px-6">
@@ -180,7 +190,22 @@ include_once('../../../database/koneksi_db.php');
                                                                     <!-- Nama Pelanggan -->
                                                                     <td class="px-5 py-4 sm:px-6">
                                                                         <p class="text-gray-800 text-theme-sm dark:text-white/90 font-medium">
-                                                                            <?= htmlspecialchars($iklan['nama_pelanggan'] ?? '-') ?>
+                                                                            <?= htmlspecialchars($iklan['nama_pelanggan'] ?? '-') ?> |
+                                                                            <?= htmlspecialchars($iklan['kode_pelanggan'] ?? '-') ?>
+                                                                        </p>
+                                                                    </td>
+
+                                                                    <!-- Jenis Iklan -->
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <p class="text-gray-500 text-theme-sm dark:text-gray-400 max-w-[180px] truncate" title="<?= htmlspecialchars($iklan['judul_iklan']) ?>">
+                                                                            <?= htmlspecialchars($iklan['nama_lokasi']) ?>
+                                                                        </p>
+                                                                    </td>
+
+                                                                    <!-- Alamat Iklan -->
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <p class="text-gray-500 text-theme-sm dark:text-gray-400 max-w-[180px] truncate" title="<?= htmlspecialchars($iklan['alamat']) ?>">
+                                                                            <?= htmlspecialchars($iklan['alamat']) ?>
                                                                         </p>
                                                                     </td>
 
@@ -191,27 +216,12 @@ include_once('../../../database/koneksi_db.php');
                                                                         </p>
                                                                     </td>
 
-                                                                    <!-- Jenis Iklan -->
-                                                                    <td class="px-5 py-4 sm:px-6">
-                                                                        <?php
-                                                                        $jenisBadge = [
-                                                                            'banner'     => 'bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
-                                                                            'billboard'  => 'bg-purple-100 text-purple-700 dark:bg-purple-500/15 dark:text-purple-400',
-                                                                            'videotron'  => 'bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400',
-                                                                        ];
-                                                                        $jenis = $iklan['jenis_iklan'];
-                                                                        $badgeClass = $jenisBadge[$jenis] ?? 'bg-gray-100 text-gray-600';
-                                                                        ?>
-                                                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize <?= $badgeClass ?>">
-                                                                            <?= htmlspecialchars($jenis) ?>
-                                                                        </span>
-                                                                    </td>
-
                                                                     <!-- Tanggal Mulai -->
                                                                     <td class="px-5 py-4 sm:px-6">
                                                                         <p class="text-gray-500 text-theme-sm dark:text-gray-400">
                                                                             <?= date('d M Y', strtotime($iklan['tanggal_mulai'])) ?>
                                                                         </p>
+
                                                                     </td>
 
                                                                     <!-- Tanggal Selesai -->
@@ -231,30 +241,8 @@ include_once('../../../database/koneksi_db.php');
                                                                     <!-- Harga -->
                                                                     <td class="px-5 py-4 sm:px-6">
                                                                         <p class="text-gray-500 text-theme-sm dark:text-gray-400 whitespace-nowrap">
-                                                                            Rp <?= number_format($iklan['harga'], 0, ',', '.') ?>
+                                                                            Rp <?= number_format($iklan['total_harga'], 0, ',', '.') ?>
                                                                         </p>
-                                                                    </td>
-
-                                                                    <!-- Status Iklan -->
-                                                                    <td class="px-5 py-4 sm:px-6">
-                                                                        <?php
-                                                                        $statusBadge = [
-                                                                            'belum_tayang' => 'bg-gray-100 text-gray-600 dark:bg-gray-500/15 dark:text-gray-400',
-                                                                            'aktif'        => 'bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-400',
-                                                                            'selesai'      => 'bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400',
-                                                                        ];
-                                                                        $statusLabel = [
-                                                                            'belum_tayang' => 'Belum Tayang',
-                                                                            'aktif'        => 'Aktif',
-                                                                            'selesai'      => 'Selesai',
-                                                                        ];
-                                                                        $status = $iklan['status_iklan'];
-                                                                        $sBadge = $statusBadge[$status] ?? 'bg-gray-100 text-gray-600';
-                                                                        $sLabel = $statusLabel[$status] ?? $status;
-                                                                        ?>
-                                                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <?= $sBadge ?>">
-                                                                            <?= $sLabel ?>
-                                                                        </span>
                                                                     </td>
 
                                                                     <!-- File Iklan -->
@@ -270,6 +258,48 @@ include_once('../../../database/koneksi_db.php');
                                                                         <?php endif; ?>
                                                                     </td>
 
+                                                                    <!-- Status Iklan -->
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <?php
+                                                                        $statusBadge = [
+                                                                            'belum_tayang' => 'rounded-full bg-warning-50 px-2 py-0.5 text-theme-xs font-medium text-warning-700 dark:bg-warning-500/15 dark:text-warning-400',
+                                                                            'aktif'        => 'rounded-full bg-success-50 px-2 py-0.5 text-theme-xs font-medium text-success-700 dark:bg-success-500/15 dark:text-success-500',
+                                                                            'selesai'      => 'rounded-full bg-error-50 px-2 py-0.5 text-theme-xs font-medium text-error-700 dark:bg-error-500/15 dark:text-error-500',
+                                                                        ];
+                                                                        $statusLabel = [
+                                                                            'belum_tayang' => 'Belum Tayang',
+                                                                            'aktif'        => 'Aktif',
+                                                                            'selesai'      => 'Selesai',
+                                                                        ];
+                                                                        $status = $iklan['status_iklan'];
+                                                                        $sBadge = $statusBadge[$status] ?? 'bg-gray-100 text-gray-600';
+                                                                        $sLabel = $statusLabel[$status] ?? $status;
+                                                                        ?>
+                                                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <?= $sBadge ?>">
+                                                                            <?= $sLabel ?>
+                                                                        </span>
+                                                                    </td>
+
+                                                                    <!-- Status Pembayaran -->
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <?php
+                                                                        $statusBadge = [
+                                                                            'pending' => 'rounded-full bg-warning-50 px-2 py-0.5 text-theme-xs font-medium text-warning-700 dark:bg-warning-500/15 dark:text-warning-400',
+                                                                            'lunas'   => 'rounded-full bg-success-50 px-2 py-0.5 text-theme-xs font-medium text-success-700 dark:bg-success-500/15 dark:text-success-500',
+                                                                        ];
+                                                                        $statusLabel = [
+                                                                            'pending' => 'Pending',
+                                                                            'lunas'   => 'Lunas',
+                                                                        ];
+                                                                        $status = $iklan['status_pembayaran'];
+                                                                        $sBadge = $statusBadge[$status] ?? 'bg-gray-100 text-gray-600';
+                                                                        $sLabel = $statusLabel[$status] ?? $status;
+                                                                        ?>
+                                                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <?= $sBadge ?>">
+                                                                            <?= $sLabel ?>
+                                                                        </span>
+                                                                    </td>
+
                                                                     <!-- Action -->
                                                                     <td class="px-5 py-4 sm:px-6">
                                                                         <div class="flex items-center gap-2">
@@ -283,6 +313,16 @@ include_once('../../../database/koneksi_db.php');
                                                                                 class="text-error-500 hover:text-error-600 text-theme-sm dark:text-error-400 dark:hover:text-error-300 bg-transparent border-none cursor-pointer p-0">
                                                                                 Hapus
                                                                             </button>
+                                                                        </div>
+                                                                    </td>
+                                                                    <!-- Cetak Invoice -->
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <div class="flex items-center gap-2">
+                                                                            <a href="../pembayaran/cetak_invoice.php?id=<?= $iklan['id_iklan'] ?>"
+                                                                                target="_blank"
+                                                                                class="text-brand-500 hover:text-brand-600 text-theme-sm dark:text-brand-400 dark:hover:text-brand-300">
+                                                                                Cetak Invoice
+                                                                            </a>
                                                                         </div>
                                                                     </td>
 
