@@ -69,39 +69,6 @@ include_once('../../../database/koneksi_db.php');
                         $stmt->execute();
                         $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                        $insertRiwayat = $conn->prepare("INSERT INTO riwayat_order (id_iklan_lama, id_pelanggan, id_lokasi, nama_pelanggan, nama_lokasi, judul_iklan, file_iklan, tanggal_mulai, tanggal_selesai,
-                                                            durasi_hari, total_harga, status_iklan, alasan
-                                                        ) VALUES (
-                                                            :id_iklan_lama,
-                                                            :id_pelanggan,
-                                                            :id_lokasi,
-                                                            :nama_pelanggan,
-                                                            :nama_lokasi,
-                                                            :judul_iklan,
-                                                            :file_iklan,
-                                                            :tanggal_mulai,
-                                                            :tanggal_selesai,
-                                                            :durasi_hari,
-                                                            :total_harga,
-                                                            'dihapus',
-                                                            'Dihapus oleh admin, kesalahan data/atau pembatalan iklan'
-                                                        )
-                                                    ");
-
-                        $insertRiwayat->execute([
-                            ':id_iklan_lama' => $data['id_iklan'],
-                            ':id_pelanggan' => $data['id_pelanggan'],
-                            ':id_lokasi' => $data['id_lokasi'],
-                            ':nama_pelanggan' => $data['nama_pelanggan'],
-                            ':nama_lokasi' => $data['nama_lokasi'],
-                            ':judul_iklan' => $data['judul_iklan'],
-                            ':file_iklan' => $data['file_iklan'],
-                            ':tanggal_mulai' => $data['tanggal_mulai'],
-                            ':tanggal_selesai' => $data['tanggal_selesai'],
-                            ':durasi_hari' => $data['durasi_hari'],
-                            ':total_harga' => $data['total_harga']
-                        ]);
-
                         $updateLokasi = $conn->prepare("UPDATE lokasi_iklan 
                                                         SET status = 'tersedia'
                                                         WHERE id_lokasi = :id_lokasi
@@ -158,39 +125,6 @@ include_once('../../../database/koneksi_db.php');
                         $stmt->bindParam(':id', $id);
                         $stmt->execute();
                         $data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                        $insertRiwayat = $conn->prepare("INSERT INTO riwayat_order (id_iklan_lama, id_pelanggan, id_lokasi, nama_pelanggan, nama_lokasi, judul_iklan, file_iklan, tanggal_mulai, tanggal_selesai,
-                                                            durasi_hari, total_harga, status_iklan, alasan
-                                                        ) VALUES (
-                                                            :id_iklan_lama,
-                                                            :id_pelanggan,
-                                                            :id_lokasi,
-                                                            :nama_pelanggan,
-                                                            :nama_lokasi,
-                                                            :judul_iklan,
-                                                            :file_iklan,
-                                                            :tanggal_mulai,
-                                                            :tanggal_selesai,
-                                                            :durasi_hari,
-                                                            :total_harga,
-                                                            'selesai',
-                                                            'Pembayaran lunas, iklan dipindahkan ke arsip'
-                                                        )
-                                                    ");
-
-                        $insertRiwayat->execute([
-                            ':id_iklan_lama' => $data['id_iklan'],
-                            ':id_pelanggan' => $data['id_pelanggan'],
-                            ':id_lokasi' => $data['id_lokasi'],
-                            ':nama_pelanggan' => $data['nama_pelanggan'],
-                            ':nama_lokasi' => $data['nama_lokasi'],
-                            ':judul_iklan' => $data['judul_iklan'],
-                            ':file_iklan' => $data['file_iklan'],
-                            ':tanggal_mulai' => $data['tanggal_mulai'],
-                            ':tanggal_selesai' => $data['tanggal_selesai'],
-                            ':durasi_hari' => $data['durasi_hari'],
-                            ':total_harga' => $data['total_harga']
-                        ]);
 
                         $updateLokasi = $conn->prepare("UPDATE lokasi_iklan 
                                                         SET status = 'tersedia'
@@ -257,6 +191,7 @@ include_once('../../../database/koneksi_db.php');
                                         <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
                                             Data Iklan
                                         </h3>
+
                                     </div>
 
                                     <!-- Table -->
