@@ -81,6 +81,7 @@ include_once('../../../database/koneksi_db.php');
                                     $judul_iklan    = htmlspecialchars(trim($_POST['judul_iklan']));
                                     $tanggal_mulai  = htmlspecialchars(trim($_POST['tanggal_mulai']));
                                     $tanggal_selesai = htmlspecialchars(trim($_POST['tanggal_selesai']));
+                                    $harga          = htmlspecialchars(trim($_POST['total_harga']));
                                     $status_iklan   = htmlspecialchars(trim($_POST['status_iklan']));
 
                                     // Upload file iklan

@@ -257,6 +257,7 @@ include_once('../../../database/koneksi_db.php');
                                         <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
                                             Data Iklan
                                         </h3>
+
                                     </div>
 
                                     <!-- Table -->
@@ -274,6 +275,11 @@ include_once('../../../database/koneksi_db.php');
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Jenis Periklanan</p>
+                                                            </th>
+                                                            <th class="px-5 py-3 sm:px-6 text-left">
+                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Lokasi Pengiklanan</p>
+                                                            </th>
+                                                            <th class="px-5 py-3 sm:px-6 text-left">
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Lokasi Pengiklanan</p>
@@ -460,6 +466,16 @@ include_once('../../../database/koneksi_db.php');
                                                                                 class="text-warning-500 hover:text-warning-600 text-theme-sm dark:text-warning-400 dark:hover:text-warning-300 bg-transparent border-none cursor-pointer p-0">
                                                                                 Pindahkan Arsip
                                                                             </button>
+                                                                        </div>
+                                                                    </td>
+                                                                    <!-- Cetak Invoice -->
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <div class="flex items-center gap-2">
+                                                                            <a href="../pembayaran/cetak_invoice.php?id=<?= $iklan['id_iklan'] ?>"
+                                                                                target="_blank"
+                                                                                class="text-brand-500 hover:text-brand-600 text-theme-sm dark:text-brand-400 dark:hover:text-brand-300">
+                                                                                Cetak Invoice
+                                                                            </a>
                                                                         </div>
                                                                     </td>
                                                                     <!-- Cetak Invoice -->
