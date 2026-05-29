@@ -114,7 +114,7 @@ include_once('../../../database/koneksi_db.php');
                                         <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
                                             Data Iklan
                                         </h3>
-                                        
+
                                     </div>
 
                                     <!-- Table -->
@@ -168,7 +168,7 @@ include_once('../../../database/koneksi_db.php');
                                                             </tr>
                                                         <?php else : ?>
                                                             <?php foreach ($iklanList as $index => $iklan) : ?>
-                                                                <tr >
+                                                                <tr>
 
                                                                     <!-- No -->
                                                                     <td class="px-5 py-4 sm:px-6">
@@ -237,26 +237,21 @@ include_once('../../../database/koneksi_db.php');
 
                                                                     <!-- Status Iklan -->
                                                                     <td class="px-5 py-4 sm:px-6">
-                                                                        <?php
-                                                                        $statusBadge = [
-                                                                            'belum_tayang' => 'bg-gray-100 text-gray-600 dark:bg-gray-500/15 dark:text-gray-400',
-                                                                            'aktif'        => 'bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-400',
-                                                                            'selesai'      => 'bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400',
-                                                                        ];
-                                                                        $statusLabel = [
-                                                                            'belum_tayang' => 'Belum Tayang',
-                                                                            'aktif'        => 'Aktif',
-                                                                            'selesai'      => 'Selesai',
-                                                                        ];
-                                                                        $status = $iklan['status_iklan'];
-                                                                        $sBadge = $statusBadge[$status] ?? 'bg-gray-100 text-gray-600';
-                                                                        $sLabel = $statusLabel[$status] ?? $status;
-                                                                        ?>
-                                                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium <?= $sBadge ?>">
-                                                                            <?= $sLabel ?>
-                                                                        </span>
+                                                                        <?php $status = $iklan['status_iklan']; ?>
+                                                                        <?php if ($status === 'aktif') : ?>
+                                                                            <span style="background-color:#dcfce7; color:#15803d; padding:2px 10px; border-radius:9999px; font-size:12px; font-weight:500;">
+                                                                                Aktif
+                                                                            </span>
+                                                                        <?php elseif ($status === 'belum_tayang') : ?>
+                                                                            <span style="background-color:#f3f4f6; color:#4b5563; padding:2px 10px; border-radius:9999px; font-size:12px; font-weight:500;">
+                                                                                Belum Tayang
+                                                                            </span>
+                                                                        <?php elseif ($status === 'selesai') : ?>
+                                                                            <span style="background-color:#fee2e2; color:#dc2626; padding:2px 10px; border-radius:9999px; font-size:12px; font-weight:500;">
+                                                                                Selesai
+                                                                            </span>
+                                                                        <?php endif; ?>
                                                                     </td>
-
                                                                     <!-- File Iklan -->
                                                                     <td class="px-5 py-4 sm:px-6">
                                                                         <?php if (!empty($iklan['file_iklan'])) : ?>
