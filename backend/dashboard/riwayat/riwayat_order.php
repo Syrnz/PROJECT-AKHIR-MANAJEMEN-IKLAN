@@ -55,6 +55,7 @@ include_once('../../../database/koneksi_db.php');
                 <div class="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
 
                     <?php
+                    // AMBIL DATA IKLAN + NAMA PELANGGAN
                     // PROSES HAPUS
                     if (isset($_GET['hapus_confirmed'])) {
                         $id = (int) $_GET['hapus_confirmed'];
@@ -176,6 +177,7 @@ include_once('../../../database/koneksi_db.php');
                                 FROM iklan AS i
                                 JOIN pelanggan AS p ON i.id_pelanggan = p.id_pelanggan
                                 JOIN lokasi_iklan AS l ON i.id_lokasi = l.id_lokasi
+                                WHERE i.status_data IN ('selesai', 'dibatalkan')
                                 ORDER BY i.created_at DESC";
                     $stmt = $conn->query($sql);
                     $iklanList = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -238,6 +240,7 @@ include_once('../../../database/koneksi_db.php');
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Status Pembayaran</p>
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
+                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Status Data</p>
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Action</p>
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
@@ -375,6 +378,11 @@ include_once('../../../database/koneksi_db.php');
                                                                             <?= $sLabel ?>
                                                                         </span>
                                                                     </td>
+                                                                    <!-- status data -->
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <p class="text-gray-500 text-theme-sm dark:text-gray-400 max-w-[180px] truncate" title="<?= htmlspecialchars($iklan['judul_iklan']) ?>">
+                                                                            <?= htmlspecialchars($iklan['status_data']) ?>
+                                                                        </p>
 
                                                                     <!-- Action -->
                                                                     <td class="px-5 py-4 sm:px-6">

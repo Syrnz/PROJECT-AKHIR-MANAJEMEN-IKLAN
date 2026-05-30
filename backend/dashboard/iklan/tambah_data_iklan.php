@@ -147,6 +147,9 @@ include_once('../../../database/koneksi_db.php');
 
 
                                             $sql = "INSERT INTO iklan 
+                                                        (id_pelanggan, id_lokasi, judul_iklan, file_iklan, tanggal_mulai, tanggal_selesai, durasi_hari, total_harga, status_iklan, status_pembayaran, created_at, status_data)
+                                                    VALUES 
+                                                        (:id_pelanggan, :id_lokasi, :judul_iklan, :file_iklan, :tanggal_mulai, :tanggal_selesai, :durasi_hari, :total_harga, :status_iklan, 'pending', CURRENT_TIMESTAMP, 'aktif')";
                                                         (id_pelanggan, id_lokasi, judul_iklan, file_iklan, tanggal_mulai, tanggal_selesai, durasi_hari, total_harga, status_iklan, status_pembayaran, created_at)
                                                     VALUES 
                                                         (:id_pelanggan, :id_lokasi, :judul_iklan, :file_iklan, :tanggal_mulai, :tanggal_selesai, :durasi_hari, :total_harga, :status_iklan, 'pending', CURRENT_TIMESTAMP)";
@@ -339,7 +342,7 @@ include_once('../../../database/koneksi_db.php');
                                             </div>
                                         </div>
 
-                                        <!-- Durasi Hari (auto-hitung, readonly) -->
+                                        <!-- Durasi Hari-->
                                         <div>
                                             <label for="durasi_hari" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                                                 Durasi Hari <span class="text-xs text-gray-400">(otomatis dihitung)</span>
