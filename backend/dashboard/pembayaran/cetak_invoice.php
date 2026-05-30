@@ -11,7 +11,7 @@ include_once('../../../database/koneksi_db.php');
         name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>TAMBAH DATA IKLAN</title>
+    <title>UBAH DATA IKLAN</title>
     <link rel="icon" href="../favicon.ico">
     <link href="../src/css/style.css" rel="stylesheet">
 </head>
@@ -55,37 +55,58 @@ include_once('../../../database/koneksi_db.php');
                             <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
                                 <div class="px-5 py-4 sm:px-6 sm:py-5">
                                     <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
-                                        Tambah Data Iklan
+                                        Ubah Data Iklan
                                     </h3>
                                 </div>
 
                                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
                                 <?php
-                                $error = "";
+                                if (!isset($_GET['id'])) {
+                                    die("ID tidak ditemukan!");
+                                }
 
+                                $sql = "SELECT * FROM iklan WHERE id_iklan = :id_iklan";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bindParam(':id_iklan', $_GET['id']);
+                                $stmt->execute();
+                                $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                                $sqlJoin = "SELECT i.*, p.nama_pelanggan, p.kode_pelanggan, l.nama_lokasi, l.alamat
+                                                    FROM iklan AS i
+                                                    JOIN pelanggan AS p ON i.id_pelanggan = p.id_pelanggan
+                                                    JOIN lokasi_iklan AS l ON i.id_lokasi = l.id_lokasi";
+                                $stmtJoin = $conn->prepare($sqlJoin . " WHERE i.id_iklan = :id_iklan");
+                                $stmtJoin->bindParam(':id_iklan', $_GET['id']);
+                                $stmtJoin->execute();
+                                $joinList = $stmtJoin->fetch(PDO::FETCH_ASSOC);
                                 // Ambil daftar pelanggan untuk dropdown id_pelanggan
-                                $pelangganList = [];
-                                $stmtPelanggan = $conn->query("SELECT id_pelanggan, nama_pelanggan, kode_pelanggan FROM pelanggan ORDER BY nama_pelanggan ASC");
-                                $pelangganList = $stmtPelanggan->fetchAll(PDO::FETCH_ASSOC);
+                                // $pelangganList = [];
+                                // $stmtPelanggan = $conn->query("SELECT id_pelanggan, nama_pelanggan, kode_pelanggan FROM pelanggan ORDER BY nama_pelanggan ASC");
+                                // $pelangganList = $stmtPelanggan->fetchAll(PDO::FETCH_ASSOC);
 
-                                // Ambil daftar lokasi untuk dropdown id_lokasi yang tersedia
-                                $lokasiList = [];
-                                $stmtLokasi = $conn->query("SELECT id_lokasi, nama_lokasi, alamat, harga FROM lokasi_iklan WHERE status = 'tersedia' ORDER BY nama_lokasi ASC");
-                                $lokasiList = $stmtLokasi->fetchAll(PDO::FETCH_ASSOC);
+                                // // Ambil daftar lokasi untuk dropdown id_lokasi yang tersedia
+                                // $lokasiList = [];
+                                // $stmtLokasi = $conn->prepare("SELECT id_lokasi, nama_lokasi, alamat, harga
+                                //                             FROM lokasi_iklan
+                                //                             WHERE id_lokasi = :id_lokasi
+                                //                             ");
 
-                                if (isset($_POST['tambahData'])) {
-                                    // Sanitasi input
+                                // $stmtLokasi->bindParam(':id_lokasi', $data['id_lokasi']);
+                                // $stmtLokasi->execute();
+                                // $lokasiList = $stmtLokasi->fetchAll(PDO::FETCH_ASSOC);
+
+                                $error = "";
+                                if (isset($_POST['ubahData'])) {
                                     $id_pelanggan   = htmlspecialchars(trim($_POST['id_pelanggan']));
                                     $lokasi_iklan    = htmlspecialchars(trim($_POST['id_lokasi']));
                                     $judul_iklan    = htmlspecialchars(trim($_POST['judul_iklan']));
                                     $tanggal_mulai  = htmlspecialchars(trim($_POST['tanggal_mulai']));
                                     $tanggal_selesai = htmlspecialchars(trim($_POST['tanggal_selesai']));
-                                    $harga          = htmlspecialchars(trim($_POST['total_harga']));
                                     $status_iklan   = htmlspecialchars(trim($_POST['status_iklan']));
 
                                     // Upload file iklan
-                                    $file_iklan = null;
+                                    $file_iklan = $data['file_iklan'];
                                     if (isset($_FILES['file_iklan']) && $_FILES['file_iklan']['error'] === UPLOAD_ERR_OK) {
                                         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'application/pdf'];
                                         $fileType = mime_content_type($_FILES['file_iklan']['tmp_name']);
@@ -99,6 +120,15 @@ include_once('../../../database/koneksi_db.php');
                                             $uploadDir = '../uploads/iklan/';
                                             if (!is_dir($uploadDir)) {
                                                 mkdir($uploadDir, 0755, true);
+                                            }
+                                            if (!empty($_FILES['file_iklan']['name'])) {
+
+                                                // hapus file lama
+                                                if ($data['file_iklan'] != null) {
+                                                    unlink('../uploads/iklan/' . $data['file_iklan']);
+                                                }
+
+                                                // upload baru
                                             }
                                             $fileName = time() . '_' . basename($_FILES['file_iklan']['name']);
                                             $uploadPath = $uploadDir . $fileName;
@@ -146,13 +176,19 @@ include_once('../../../database/koneksi_db.php');
                                             $total_harga = $durasi_hari * $harga_per_hari;
 
 
-                                            $sql = "INSERT INTO iklan 
-                                                        (id_pelanggan, id_lokasi, judul_iklan, file_iklan, tanggal_mulai, tanggal_selesai, durasi_hari, total_harga, status_iklan, status_pembayaran, created_at, status_data)
-                                                    VALUES 
-                                                        (:id_pelanggan, :id_lokasi, :judul_iklan, :file_iklan, :tanggal_mulai, :tanggal_selesai, :durasi_hari, :total_harga, :status_iklan, 'pending', CURRENT_TIMESTAMP, 'aktif')";
-                                                        (id_pelanggan, id_lokasi, judul_iklan, file_iklan, tanggal_mulai, tanggal_selesai, durasi_hari, total_harga, status_iklan, status_pembayaran, created_at)
-                                                    VALUES 
-                                                        (:id_pelanggan, :id_lokasi, :judul_iklan, :file_iklan, :tanggal_mulai, :tanggal_selesai, :durasi_hari, :total_harga, :status_iklan, 'pending', CURRENT_TIMESTAMP)";
+                                            $sql = "UPDATE iklan SET
+                                                        id_pelanggan = :id_pelanggan,
+                                                        id_lokasi = :id_lokasi,
+                                                        judul_iklan = :judul_iklan,
+                                                        file_iklan = :file_iklan,
+                                                        tanggal_mulai = :tanggal_mulai,
+                                                        tanggal_selesai = :tanggal_selesai,
+                                                        durasi_hari = :durasi_hari,
+                                                        total_harga = :total_harga,
+                                                        status_iklan = :status_iklan,
+                                                        updated_at = CURRENT_TIMESTAMP
+                                                    WHERE id_iklan = :id_iklan
+                                                    ";
 
                                             $stmt = $conn->prepare($sql);
                                             $stmt->bindParam(':id_pelanggan',    $id_pelanggan);
@@ -164,22 +200,14 @@ include_once('../../../database/koneksi_db.php');
                                             $stmt->bindParam(':durasi_hari',     $durasi_hari, PDO::PARAM_INT);
                                             $stmt->bindParam(':total_harga',     $total_harga);
                                             $stmt->bindParam(':status_iklan',    $status_iklan);
+                                            $stmt->bindParam(':id_iklan',        $_GET['id']);
 
                                             if ($stmt->execute()) {
-
-                                                $updateLokasi = $conn->prepare("UPDATE lokasi_iklan
-                                                                                SET status = 'disewa'
-                                                                                WHERE id_lokasi = :id_lokasi
-                                                                                ");
-
-                                                $updateLokasi->bindParam(':id_lokasi', $lokasi_iklan);
-
-                                                $updateLokasi->execute();
 
                                                 echo "<script>
                                                     Swal.fire({
                                                         icon: 'success',
-                                                        title: 'Data berhasil ditambahkan!',
+                                                        title: 'Data berhasil diubah!',
                                                         showConfirmButton: false,
                                                         timer: 1500
                                                     }).then(() => {
@@ -190,7 +218,7 @@ include_once('../../../database/koneksi_db.php');
                                                 echo "<script>
                                                     Swal.fire({
                                                         icon: 'error',
-                                                        title: 'Data gagal ditambahkan!',
+                                                        title: 'Data gagal diubah!',
                                                         showConfirmButton: false,
                                                         timer: 1500
                                                     });
@@ -219,7 +247,7 @@ include_once('../../../database/koneksi_db.php');
                                 <?php endif; ?>
 
                                 <!-- Form -->
-                                <form action="tambah_data_iklan.php" method="POST" enctype="multipart/form-data">
+                                <form action="edit_data_iklan.php?id=<?= $data['id_iklan'] ?>" name="ubahData" method="POST" enctype="multipart/form-data">
                                     <div class="space-y-6 border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
 
                                         <!-- Pelanggan -->
@@ -227,16 +255,14 @@ include_once('../../../database/koneksi_db.php');
                                             <label for="id_pelanggan" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                                                 Pelanggan
                                             </label>
-                                            <select name="id_pelanggan" id="id_pelanggan"
-                                                class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
-                                                <option value="">-- Pilih Pelanggan --</option>
-                                                <?php foreach ($pelangganList as $p) : ?>
-                                                    <option value="<?= $p['id_pelanggan'] ?>"
-                                                        <?= (isset($_POST['id_pelanggan']) && $_POST['id_pelanggan'] == $p['id_pelanggan']) ? 'selected' : '' ?>>
-                                                        <?= htmlspecialchars($p['nama_pelanggan']) ?> | <?= htmlspecialchars($p['kode_pelanggan']) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                            <input type="text" name="id_iklan" value="<?= $data['id_iklan'] ?>" hidden>
+
+                                            <input type="hidden" name="id_pelanggan" value="<?= $data['id_pelanggan'] ?>">
+                                            <input
+                                                type="text"
+                                                readonly
+                                                value="<?= htmlspecialchars($joinList['nama_pelanggan']) ?> | <?= htmlspecialchars($joinList['kode_pelanggan']) ?>"
+                                                class="dark:bg-dark-900 shadow-theme-xs h-11 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white/50 cursor-not-allowed" />
                                         </div>
 
                                         <!-- Jenis Iklan -->
@@ -244,17 +270,12 @@ include_once('../../../database/koneksi_db.php');
                                             <label for="id_lokasi" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                                                 Jenis & Lokasi Iklan
                                             </label>
-                                            <select name="id_lokasi" id="id_lokasi"
-                                                class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
-                                                <option value="">-- Pilih Lokasi --</option>
-                                                <?php foreach ($lokasiList as $l) : ?>
-                                                    <option value="<?= $l['id_lokasi'] ?>"
-                                                        data-harga="<?= $l['harga'] ?>"
-                                                        <?= (isset($_POST['id_lokasi']) && $_POST['id_lokasi'] == $l['id_lokasi']) ? 'selected' : '' ?>>
-                                                        <?= htmlspecialchars($l['nama_lokasi']) ?> | <?= htmlspecialchars($l['alamat']) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                            <input type="hidden" name="id_lokasi" value="<?= $data['id_lokasi'] ?>">
+                                            <input
+                                                type="text"
+                                                readonly
+                                                value="<?= htmlspecialchars($joinList['nama_lokasi']) ?> | <?= htmlspecialchars($joinList['alamat']) ?>"
+                                                class="dark:bg-dark-900 shadow-theme-xs h-11 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white/50 cursor-not-allowed" />
                                         </div>
 
                                         <!-- Judul Iklan -->
@@ -264,7 +285,7 @@ include_once('../../../database/koneksi_db.php');
                                             </label>
                                             <input
                                                 type="text" name="judul_iklan" id="judul_iklan" maxlength="150"
-                                                value="<?= isset($_POST['judul_iklan']) ? htmlspecialchars($_POST['judul_iklan']) : '' ?>"
+                                                value="<?= $data['judul_iklan'] ?>"
                                                 class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
                                                 placeholder="Masukkan Judul Iklan" />
                                         </div>
@@ -274,6 +295,19 @@ include_once('../../../database/koneksi_db.php');
                                             <label for="file_iklan" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                                                 File Iklan <span class="text-xs text-gray-400">(JPG, PNG, GIF, MP4, PDF – maks. 10 MB)</span>
                                             </label>
+                                            <?php if (!empty($data['file_iklan'])) : ?>
+                                                <div class="mb-2 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                                                    </svg>
+                                                    File saat ini:
+                                                    <a href="../uploads/iklan/<?= htmlspecialchars($data['file_iklan']) ?>"
+                                                        target="_blank"
+                                                        class="text-brand-500 hover:underline dark:text-brand-400">
+                                                        <?= htmlspecialchars($data['file_iklan']) ?>
+                                                    </a>
+                                                </div>
+                                            <?php endif; ?>
                                             <input
                                                 type="file" name="file_iklan" id="file_iklan"
                                                 accept=".jpg,.jpeg,.png,.gif,.mp4,.pdf"
@@ -288,7 +322,7 @@ include_once('../../../database/koneksi_db.php');
                                             <div class="relative">
                                                 <input
                                                     type="date" name="tanggal_mulai" id="tanggal_mulai" min="<?= date('Y-m-d') ?>"
-                                                    value="<?= isset($_POST['tanggal_mulai']) ? htmlspecialchars($_POST['tanggal_mulai']) : '' ?>"
+                                                    value="<?= htmlspecialchars($data['tanggal_mulai']) ?>"
                                                     placeholder="Select date"
                                                     class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 pl-4 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
                                                     onclick="this.showPicker()" />
@@ -319,7 +353,7 @@ include_once('../../../database/koneksi_db.php');
                                             <div class="relative">
                                                 <input
                                                     type="date" type="date" name="tanggal_selesai" id="tanggal_selesai"
-                                                    value="<?= isset($_POST['tanggal_selesai']) ? htmlspecialchars($_POST['tanggal_selesai']) : '' ?>"
+                                                    value="<?= htmlspecialchars($data['tanggal_selesai']) ?>"
                                                     placeholder="Select date"
                                                     class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 pl-4 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
                                                     onclick="this.showPicker()" />
@@ -342,13 +376,14 @@ include_once('../../../database/koneksi_db.php');
                                             </div>
                                         </div>
 
-                                        <!-- Durasi Hari-->
+                                        <!-- Durasi Hari (auto-hitung, readonly) -->
                                         <div>
                                             <label for="durasi_hari" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                                                 Durasi Hari <span class="text-xs text-gray-400">(otomatis dihitung)</span>
                                             </label>
                                             <input
                                                 type="number" name="durasi_hari" id="durasi_hari" readonly
+                                                value="<?= htmlspecialchars($data['durasi_hari']) ?>"
                                                 placeholder="Otomatis terisi setelah memilih tanggal"
                                                 class="dark:bg-dark-900 shadow-theme-xs h-11 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white/50 cursor-not-allowed" />
                                         </div>
@@ -359,7 +394,8 @@ include_once('../../../database/koneksi_db.php');
                                                 Total Harga
                                             </label>
                                             <input
-                                                type="number" name="harga" id="harga" min="0" step="0.01" readonly
+                                                type="number" name="total_harga" id="harga" min="0" step="0.01" readonly
+                                                value="<?= htmlspecialchars($data['total_harga']) ?>"
                                                 class="dark:bg-dark-900 shadow-theme-xs h-11 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white/50 cursor-not-allowed"
                                                 placeholder="Otomatis terisi setelah memilih lokasi dan durasi ditentukan" />
                                         </div>
@@ -371,18 +407,22 @@ include_once('../../../database/koneksi_db.php');
                                             </label>
                                             <select name="status_iklan" id="status_iklan"
                                                 class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
-                                                <option value="belum_tayang" <?= (!isset($_POST['status_iklan']) || $_POST['status_iklan'] === 'belum_tayang') ? 'selected' : '' ?>>Belum Tayang</option>
-                                                <option value="aktif" <?= (isset($_POST['status_iklan']) && $_POST['status_iklan'] === 'aktif')        ? 'selected' : '' ?>>Aktif</option>
-                                                <option value="selesai" <?= (isset($_POST['status_iklan']) && $_POST['status_iklan'] === 'selesai')      ? 'selected' : '' ?>>Selesai</option>
+                                                <option value="belum_tayang" <?= ($data['status_iklan'] === 'belum_tayang') ? 'selected' : '' ?>>Belum Tayang</option>
+                                                <option value="aktif" <?= ($data['status_iklan'] === 'aktif') ? 'selected' : '' ?>>Aktif</option>
+                                                <option value="selesai" <?= ($data['status_iklan'] === 'selesai') ? 'selected' : '' ?>>Selesai</option>
                                             </select>
                                         </div>
 
                                         <!-- Tombol Submit -->
                                         <div class="flex gap-3">
-                                            <button type="submit" name="tambahData"
+                                            <button type="submit" name="ubahData"
                                                 class="bg-brand-500 hover:bg-brand-600 rounded-lg px-5 py-3 text-sm font-medium text-white transition-colors">
-                                                Submit
+                                                Ubah Data
                                             </button>
+                                            <a href="data_iklan.php"
+                                                class="bg-error-500 hover:bg-error-600 rounded-lg px-5 py-3 text-sm font-medium text-white transition-colors">
+                                                Batal
+                                            </a>
                                         </div>
 
                                     </div>
@@ -423,8 +463,7 @@ include_once('../../../database/koneksi_db.php');
 
                                             // hitung selisih hari
                                             const selisih =
-                                                Math.round( (selesai - mulai) /  (1000 * 60 * 60 * 24)
-                                                );
+                                                Math.round((selesai - mulai) / (1000 * 60 * 60 * 24));
 
                                             // isi durasi
                                             durasiInput.value = selisih;

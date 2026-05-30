@@ -56,6 +56,123 @@ include_once('../../../database/koneksi_db.php');
 
                     <?php
                     // AMBIL DATA IKLAN + NAMA PELANGGAN
+                    // PROSES HAPUS
+                    if (isset($_GET['hapus_confirmed'])) {
+                        $id = (int) $_GET['hapus_confirmed'];
+                        $stmt = $conn->prepare("SELECT iklan.*, pelanggan.nama_pelanggan, lokasi_iklan.nama_lokasi
+                                                FROM iklan
+                                                JOIN pelanggan 
+                                                    ON iklan.id_pelanggan = pelanggan.id_pelanggan
+                                                JOIN lokasi_iklan 
+                                                    ON iklan.id_lokasi = lokasi_iklan.id_lokasi
+                                                WHERE id_iklan = :id");
+                        $stmt->bindParam(':id', $id);
+                        $stmt->execute();
+                        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                        $updateLokasi = $conn->prepare("UPDATE lokasi_iklan 
+                                                        SET status = 'tersedia'
+                                                        WHERE id_lokasi = :id_lokasi
+                                                    ");
+                        $updateLokasi->execute([
+                            ':id_lokasi' => $data['id_lokasi']
+                        ]);
+                        $delete = $conn->prepare("
+                            DELETE FROM iklan
+                            WHERE id_iklan = :id
+                        ");
+                        $delete->execute([
+                            ':id' => $id
+                        ]);
+                        if ($delete->execute()) {
+                            echo "<script>
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    Swal.fire({
+                                        title: 'Berhasil!',
+                                        text: 'Data iklan berhasil dihapus.',
+                                        icon: 'success',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    }).then(() => {
+                                        window.location.href = 'data_iklan.php';
+                                    });
+                                });
+                            </script>";
+                        } else {
+                            echo "<script>
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Data iklan gagal dihapus.',
+                                        icon: 'error',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+                                });
+                            </script>";
+                        }
+                    }
+
+                    // PROSES PINDAH KE ARSIP
+                    if (isset($_GET['pindah_arsip_confirmed'])) {
+                        $id = (int) $_GET['pindah_arsip_confirmed'];
+                        $stmt = $conn->prepare("SELECT iklan.*, pelanggan.nama_pelanggan, lokasi_iklan.nama_lokasi
+                                                FROM iklan
+                                                JOIN pelanggan 
+                                                    ON iklan.id_pelanggan = pelanggan.id_pelanggan
+                                                JOIN lokasi_iklan 
+                                                    ON iklan.id_lokasi = lokasi_iklan.id_lokasi
+                                                WHERE id_iklan = :id");
+                        $stmt->bindParam(':id', $id);
+                        $stmt->execute();
+                        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                        $updateLokasi = $conn->prepare("UPDATE lokasi_iklan 
+                                                        SET status = 'tersedia'
+                                                        WHERE id_lokasi = :id_lokasi
+                                                    ");
+                        $updateLokasi->execute([
+                            ':id_lokasi' => $data['id_lokasi']
+                        ]);
+                        $delete = $conn->prepare("
+                            DELETE FROM iklan
+                            WHERE id_iklan = :id
+                        ");
+                        $delete->execute([
+                            ':id' => $id
+                        ]);
+                        if ($delete->execute()) {
+                            echo "<script>
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    Swal.fire({
+                                        title: 'Berhasil!',
+                                        text: 'Data iklan berhasil dipindahkan ke arsip.',
+                                        icon: 'success',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    }).then(() => {
+                                        window.location.href = 'data_iklan.php';
+                                    });
+                                });
+                            </script>";
+                        } else {
+                            echo "<script>
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Data iklan gagal dipindahkan ke arsip.',
+                                        icon: 'error',
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+                                });
+                            </script>";
+                        }
+                    }
+
+                    // ==============================
+                    // AMBIL DATA IKLAN + NAMA PELANGGAN
+                    // ==============================
                     $sql  = "SELECT i.*, p.nama_pelanggan, p.kode_pelanggan, l.nama_lokasi, l.alamat
                                 FROM iklan AS i
                                 JOIN pelanggan AS p ON i.id_pelanggan = p.id_pelanggan
@@ -76,6 +193,7 @@ include_once('../../../database/koneksi_db.php');
                                         <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
                                             Data Iklan
                                         </h3>
+
                                     </div>
 
                                     <!-- Table -->
@@ -123,6 +241,10 @@ include_once('../../../database/koneksi_db.php');
                                                             </th>
                                                             <th class="px-5 py-3 sm:px-6 text-left">
                                                                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Status Data</p>
+                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Action</p>
+                                                            </th>
+                                                            <th class="px-5 py-3 sm:px-6 text-left">
+                                                                <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Cetak Invoice</p>
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -261,6 +383,37 @@ include_once('../../../database/koneksi_db.php');
                                                                         <p class="text-gray-500 text-theme-sm dark:text-gray-400 max-w-[180px] truncate" title="<?= htmlspecialchars($iklan['judul_iklan']) ?>">
                                                                             <?= htmlspecialchars($iklan['status_data']) ?>
                                                                         </p>
+
+                                                                    <!-- Action -->
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <div class="flex items-center gap-2">
+                                                                            <a href="edit_data_iklan.php?id=<?= $iklan['id_iklan'] ?>"
+                                                                                class="text-brand-500 hover:text-brand-600 text-theme-sm dark:text-brand-400 dark:hover:text-brand-300">
+                                                                                Edit
+                                                                            </a>
+                                                                            <span class="text-gray-300 dark:text-gray-600">|</span>
+                                                                            <button
+                                                                                onclick="konfirmasiHapus(<?= $iklan['id_iklan'] ?>, '<?= htmlspecialchars(addslashes($iklan['judul_iklan'])) ?>')"
+                                                                                class="text-error-500 hover:text-error-600 text-theme-sm dark:text-error-400 dark:hover:text-error-300 bg-transparent border-none cursor-pointer p-0">
+                                                                                Hapus
+                                                                            </button>
+                                                                            <span class="text-gray-300 dark:text-gray-600">|</span>
+                                                                            <button
+                                                                                onclick="konfirmasiPindahArsip(<?= $iklan['id_iklan'] ?>, '<?= htmlspecialchars(addslashes($iklan['judul_iklan'])) ?>')"
+                                                                                class="text-warning-500 hover:text-warning-600 text-theme-sm dark:text-warning-400 dark:hover:text-warning-300 bg-transparent border-none cursor-pointer p-0">
+                                                                                Pindahkan Arsip
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+                                                                    <!-- Cetak Invoice -->
+                                                                    <td class="px-5 py-4 sm:px-6">
+                                                                        <div class="flex items-center gap-2">
+                                                                            <a href="../pembayaran/cetak_invoice.php?id=<?= $iklan['id_iklan'] ?>"
+                                                                                target="_blank"
+                                                                                class="text-brand-500 hover:text-brand-600 text-theme-sm dark:text-brand-400 dark:hover:text-brand-300">
+                                                                                Cetak Invoice
+                                                                            </a>
+                                                                        </div>
                                                                     </td>
 
                                                                 </tr>
