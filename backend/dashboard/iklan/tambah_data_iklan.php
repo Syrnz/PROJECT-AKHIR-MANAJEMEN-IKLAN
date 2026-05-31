@@ -81,7 +81,6 @@ include_once('../../../database/koneksi_db.php');
                                     $judul_iklan    = htmlspecialchars(trim($_POST['judul_iklan']));
                                     $tanggal_mulai  = htmlspecialchars(trim($_POST['tanggal_mulai']));
                                     $tanggal_selesai = htmlspecialchars(trim($_POST['tanggal_selesai']));
-                                    $harga          = htmlspecialchars(trim($_POST['total_harga']));
                                     $status_iklan   = htmlspecialchars(trim($_POST['status_iklan']));
 
                                     // Upload file iklan
@@ -150,9 +149,6 @@ include_once('../../../database/koneksi_db.php');
                                                         (id_pelanggan, id_lokasi, judul_iklan, file_iklan, tanggal_mulai, tanggal_selesai, durasi_hari, total_harga, status_iklan, status_pembayaran, created_at, status_data)
                                                     VALUES 
                                                         (:id_pelanggan, :id_lokasi, :judul_iklan, :file_iklan, :tanggal_mulai, :tanggal_selesai, :durasi_hari, :total_harga, :status_iklan, 'pending', CURRENT_TIMESTAMP, 'aktif')";
-                                                        (id_pelanggan, id_lokasi, judul_iklan, file_iklan, tanggal_mulai, tanggal_selesai, durasi_hari, total_harga, status_iklan, status_pembayaran, created_at)
-                                                    VALUES 
-                                                        (:id_pelanggan, :id_lokasi, :judul_iklan, :file_iklan, :tanggal_mulai, :tanggal_selesai, :durasi_hari, :total_harga, :status_iklan, 'pending', CURRENT_TIMESTAMP)";
 
                                             $stmt = $conn->prepare($sql);
                                             $stmt->bindParam(':id_pelanggan',    $id_pelanggan);

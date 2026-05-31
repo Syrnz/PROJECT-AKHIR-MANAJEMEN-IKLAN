@@ -94,7 +94,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             :class="(selected === 'Lokasi Iklan') ? 'menu-item-active' : 'menu-item-inactive'">
                             <svg
                                 :class="(selected === 'Task') || (page === 'taskList' || page === 'taskKanban') ? 'menu-item-icon-active'  :'menu-item-icon-inactive'"
-                                :class="(selected === 'Lokasi Iklan') ? 'menu-item-icon-active'  :'menu-item-icon-inactive'"
                                 width="24"
                                 height="24"
                                 viewBox="0 0 24 24"
@@ -112,51 +111,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                 :class="sidebarToggle ? 'lg:hidden' : ''">
                                 Lokasi Iklan
                             </span>
-
-                            <svg
-                                class="menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current"
-                                :class="[(selected === 'Lokasi Iklan') ? 'menu-item-arrow-active' : 'menu-item-arrow-inactive', sidebarToggle ? 'lg:hidden' : '' ]"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
-                                    stroke=""
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </a>
-
-                                    d="M8.50391 4.25C8.50391 3.83579 8.83969 3.5 9.25391 3.5H15.2777C15.4766 3.5 15.6674 3.57902 15.8081 3.71967L18.2807 6.19234C18.4214 6.333 18.5004 6.52376 18.5004 6.72268V16.75C18.5004 17.1642 18.1646 17.5 17.7504 17.5H16.248V17.4993H14.748V17.5H9.25391C8.83969 17.5 8.50391 17.1642 8.50391 16.75V4.25ZM14.748 19H9.25391C8.01126 19 7.00391 17.9926 7.00391 16.75V6.49854H6.24805C5.83383 6.49854 5.49805 6.83432 5.49805 7.24854V19.75C5.49805 20.1642 5.83383 20.5 6.24805 20.5H13.998C14.4123 20.5 14.748 20.1642 14.748 19.75L14.748 19ZM7.00391 4.99854V4.25C7.00391 3.00736 8.01127 2 9.25391 2H15.2777C15.8745 2 16.4468 2.23705 16.8687 2.659L19.3414 5.13168C19.7634 5.55364 20.0004 6.12594 20.0004 6.72268V16.75C20.0004 17.9926 18.9931 19 17.7504 19H16.248L16.248 19.75C16.248 20.9926 15.2407 22 13.998 22H6.24805C5.00541 22 3.99805 20.9926 3.99805 19.75V7.24854C3.99805 6.00589 5.00541 4.99854 6.24805 4.99854H7.00391Z"
-                                    fill="" />
-                            </svg>
-
-                            <span
-                                class="menu-item-text"
-                                :class="sidebarToggle ? 'lg:hidden' : ''">
-                                Lokasi Iklan
-                            </span>
-
-                            <svg
-                                class="menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current"
-                                :class="[(selected === 'Lokasi Iklan') ? 'menu-item-arrow-active' : 'menu-item-arrow-inactive', sidebarToggle ? 'lg:hidden' : '' ]"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M4.79175 7.39584L10.0001 12.6042L15.2084 7.39585"
-                                    stroke=""
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </a>
-
 
                             <svg
                                 class="menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current"
@@ -474,7 +428,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                         href="../riwayat/riwayat_pembayaran.php"
                                         class="menu-dropdown-item group <?= ($current_page == 'riwayat_pembayaran.php') ? 'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'; ?>">
                                         Lihat Data Riwayat Pembayaran
-                                        Tambah Data Riwayat Pembayaran
                                     </a>
                                 </li>
                             </ul>
